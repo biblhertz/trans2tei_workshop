@@ -6,4 +6,6 @@ Plan for the conference
 - correct
 - export
 - PAGE2TEI
-- 
+- XSLT
+- Import in TEI Publisher
+- Cross fingers
