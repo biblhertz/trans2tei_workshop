@@ -61,13 +61,13 @@ print(xml_data, file=open("temp/positions.xml", "w"))
 Before
 
 ```xml
-⌠(.*?)⌡
+⌠italics⌡
 ```
 
 After 
 
 ```xml
-<hi rendition="#i">\1</hi>
+<hi rendition="#i">italics</hi>
 ```
 
 ```python
@@ -83,13 +83,13 @@ print(xml_data, file=open("temp/cur.xml", 'w'))
 Before
 
 ```xml
-⊂([0-9]+)⊃
+⊂1⊃
 ```
 
 After 
 
 ```xml
-<note type="refnum">\1</note>
+<note type="refnum">1</note>
 ```
 
 ```python
@@ -104,13 +104,13 @@ print(xml_data, file=open("temp/fn1.xml", 'w'))
 Before
 
 ```xml
-⊤([0-9]+)⊥
+⊤1⊥
 ```
 
 After 
 
 ```xml
-<hi rendition="#sup">\1</hi>
+<hi rendition="#sup">1</hi>
 ```
 
 ```python
@@ -125,8 +125,8 @@ Before
 
 ```xml
 <div>
-    <p>Lorem ipsum<note type="refnum">\1</note> dolor</p>
-    <note><hi rendition="#sup">\1</hi> Sit amet.</note>
+    <p>Lorem ipsum<note type="refnum">1</note> dolor</p>
+    <note><hi rendition="#sup">1</hi> Sit amet.</note>
 </div>
 
 ```
@@ -148,14 +148,14 @@ print(xml_data, file=open("temp/fn3.xml", 'w'))
 
 `₍([A-Z\-]+)₎` -> `<hi rendition="#k">` + `m.group(1).lower()` + `</hi>`
 
-```xml
-₍([A-Z\-]+)₎
+```
+₍ABC₎
 ```
 
 After 
 
 ```xml
-<hi rendition="#k">' + m.group(1).lower() + '</hi>
+<hi rendition="#k">abc</hi>
 ```
 
 ```python
@@ -168,13 +168,13 @@ print(xml_data, file=open("temp/scap.xml", 'w'))
 `type="first-paragraph"` -> `type="first" rendition="#aq"`
 
 ```xml
-type="first-paragraph"
+<p type="first-paragraph">Lorem</p>
 ```
 
 After 
 
 ```xml
-type="first" rendition="#aq"
+<p type="first" rendition="#aq">Lorem</p>
 ```
 
 ```python
@@ -186,14 +186,14 @@ print(xml_data, file=open("temp/para.xml", 'w'))
 
 `\[↾([F0-9/\-]+)⇃\]` -> `lambda m: '[<ref target="#doc_' + re.sub(r'/', '_', m.group(1)) + '">' + m.group(1) + '</ref>]'"`
 
-```xml
-\[↾([F0-9/\-]+)⇃\]
+```
+[↾1550/4⇃]
 ```
 
 After 
 
 ```xml
-lambda m: '[<ref target="#doc_' + re.sub(r'/', '_', m.group(1)) + '">' + m.group(1) + '</ref>]'
+[<ref target="#doc_1550_4">1550/4</ref>]
 ```
 
 ```python
@@ -207,14 +207,14 @@ print(xml_data, file=open("temp/link.xml", 'w'))
 
 Before
 
-```xml
-↾([^<>]?)⇃
+```
+↾bold⇃
 ```
 
 After 
 
 ```xml
-<hi rendition="#b">\1</hi>
+<hi rendition="#b">bold</hi>
 ```
 
 ```python
@@ -230,12 +230,28 @@ print(xml_data, file=open("temp/bold.xml", 'w'))
 Before
 
 ```xml
-(<pb facs="#facs_([0-9]+)".*? />\n)(\s+)(</div>\n\s+<div>\n)
+<div>
+    <div>
+        <p>Lorem ispum</p>
+        <pb facs="#facs_([0-9]+)"/>
+    </div>
+    <div>
+        <head>Dolor sit.</head>
+    </div>
+</div>
 ```
 After
 
 ```xml
-\4\3\1
+<div>
+    <div>
+        <p>Lorem ipsum</p>
+    </div>
+    <div>
+        <pb facs="#facs_([0-9]+)"/>
+        <head>Dolor sit.</head>
+    </div>
+</div>
 ```
 
 ```python
@@ -250,12 +266,30 @@ print(xml_data, file=open("temp/pb1.xml", 'w'))
 Before
 
 ```xml
-(<pb facs="#facs_[0-9]+".*? />\s*<fw.*?>\s*.*?</fw>\s*)(</div>\s*<div>\s*)
+<div>
+    <div>
+        <p>Lorem ispum</p>
+        <pb facs="#facs_([0-9]+)"/>
+        <fw/>
+    </div>
+    <div>
+        <head>Dolor sit.</head>
+    </div>
+</div>
 ```
 After
 
 ```xml
-\2\1
+<div>
+    <div>
+        <p>Lorem ispum</p>
+    </div>
+    <div>
+        <pb facs="#facs_([0-9]+)"/>
+        <fw/>
+        <head>Dolor sit.</head>
+    </div>
+</div>
 ```
 
 ```python
@@ -268,12 +302,18 @@ print(xml_data, file=open("temp/pb2.xml", 'w'))
 Before
 
 ```xml
-...
+<div>
+    <pb/>
+    <fw type="header">Running title</fw>
+    <fw type="page">42</fw>
+</div>
 ```
 After
 
 ```xml
-...
+<div>
+    <pb n="42"/>
+</div>
 ```
 
 ```python
@@ -286,12 +326,20 @@ print(xml_data, file=open("temp/pb3.xml", 'w'))
 Before
 
 ```xml
-...
+<div>
+    <p>Lorem ipsum</p>
+    <pb/>
+    <p type="continued">dolor sit amet.</p>
+</div>
 ```
 After
 
 ```xml
-...
+<div>
+    <p>Lorem ipsum
+    <pb/>
+    dolor sit amet.</p>
+</div>
 ```
 
 ```python
@@ -304,12 +352,16 @@ print(xml_data, file=open("temp/rep1.xml", "w"))
 Before
 
 ```xml
-...
+<p>Dolor sit <hi rendition="#i">italic</hi>
+    <lb/><hi rendition="#i">letters</hi> sit <hi rendition="#k">small</hi>
+    <lb/><hi rendition="#k">caps</hi>.</p>
 ```
 After
 
 ```xml
-...
+<p>Dolor sit <i>italic</i>
+    <lb/><i>letters</i> sit <k>small</k>
+    <lb/><k>caps</k>.</p>
 ```
 
 ```python
@@ -320,18 +372,22 @@ print(xml_data, file=open("temp/hi1.xml", "w"))
 
 ### Join italics and small caps 2
 
-`(<pb facs="#facs_[0-9]+".*? />\s*<fw.*?>\s*.*?</fw>\s*)(</div>\s*<div>\s*)` -> `\2\1`  
-`(<pb facs="#facs_[0-9]+".*? />\s*<fw.*?>\s*.*?</fw>\s*)(</div>\s*<div>\s*)` -> `\2\1`
+`</k>(¬?\s*(?:<pb [^<>]+/>)?\s*<lb [^<>]+/>\s*)<k>` -> `\1`  
+`</i>(¬?\s*(?:<pb [^<>]+/>)?\s*<lb [^<>]+/>\s*)<i>` -> `\1`
 
 Before
 
 ```xml
-...
+<p>Dolor sit <i>italic</i>
+    <lb/><i>letters</i> sit <k>small</k>
+    <lb/><k>caps</k>.</p>
 ```
 After
 
 ```xml
-...
+<p>Dolor sit <i>italic
+    <lb/>letters</i> sit <k>small
+    <lb/>caps</k>.</p>
 ```
 
 ```python
@@ -345,12 +401,16 @@ print(xml_data, file=open("temp/hi2.xml", "w"))
 Before
 
 ```xml
-...
+<p>Dolor sit <i>italic
+    <lb/>letters</i> sit <k>small
+    <lb/>caps</k>.</p>
 ```
 After
 
 ```xml
-...
+<p>Dolor sit <hi rendition="#i">italic
+    <lb/>letters</hi> sit <hi rendition="#k">small
+    <lb/>caps</hi>.</p>
 ```
 
 ```python
@@ -360,17 +420,16 @@ print(xml_data, file=open("temp/hi.xml", "w"))
 
 ### Encode hyphenation in TEI way
 
-`(<pb facs="#facs_[0-9]+".*? />\s*<fw.*?>\s*.*?</fw>\s*)(</div>\s*<div>\s*)` -> `\2\1`
-
 Before
 
 ```xml
-...
+<p>Kunst¬
+    <lb/>werk</p>
 ```
 After
 
 ```xml
-...
+<p>Kunst<lb break="no" rend="hyphen"/>werk</p>
 ```
 
 ```python
