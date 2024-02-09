@@ -55,3 +55,14 @@ Possible causes for errors are:
 - overlapping markup inbetween special character tags or with existing XML elements
 
 The files in `temp` can be used to locate problems in the most recent conversion.
+
+The exact steps are described in [Conversion](../Conversion/README.md).
+
+## Manual cleanup
+
+Some phenomenons have to be cleaned up after running the workflows in `gedanken.py` or `simplify.py`:
+
+- Hierarchy of chapters: Usually this is a simple task that only involves some movement of closing brackets `</div>`.
+  For our examples, fixing this was not a lot more work than doing it manually.
+- Linking: This kind of data is virtually unrestricted and will need project-specific treatment.
+

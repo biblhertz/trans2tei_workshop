@@ -9,3 +9,7 @@ Plan for the conference
 - XSLT
 - Import in TEI Publisher
 - Cross fingers
+
+## Work after Transkribus
+
+Once you have exported your document from Transkribus, follow the [step-by-step guide](Step-by-step/README.md).
