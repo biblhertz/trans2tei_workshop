@@ -33,9 +33,9 @@ This step adds the default renditions in the teiHeader and replaces some element
 - `ab[@type='first-paragraph']` to `p[@type='first-paragraph']` for non-indented paragraphs
 - `ab[@type='paragraph-center']` to `p[@type='center'][@rendition='#c']` for centered paragraphs
 - `ab[@type='bibliography']` to `p[@type='bibliography']` for bibliography lists (REMS)
-- `ab[@type='archival-notice']` to `p[@type='archival-notice']` 
-- `ab[@type='paragraph']` to `p[@rendition='#aq #ident']` 
-- `ab[@type='other']` to `p[@rendition='#aq #ident']` 
+- `ab[@type='archival-notice']` to `p[@type='archival-notice']`
+- `ab[@type='paragraph']` to `p[@rendition='#aq #ident']`
+- `ab[@type='other']` to `p[@rendition='#aq #ident']`
 - `fw[@type='page-number']` to `fw[@type='page'][@place='bottom']`
 
 This step is unlikely to break the pipeline.
@@ -61,13 +61,19 @@ print(xml_data, file=open("temp/positions.xml", "w"))
 Before
 
 ```xml
-⌠italics⌡
+<p facs="#facs_33_TextRegion_1631109932128_1025">
+    <lb facs="#facs_33_r1l27" n="N001"/>Man stößt also hier auf eine unterste Schicht von Begriffen (daher der Name
+    <lb facs="#facs_33_r1l28" n="N002"/>⌠Grund⌡begriffe), auf denen das bildliche Vorstellen in seiner allgemeinsten Form
+    <lb facs="#facs_33_r1l29" n="N003"/>beruht.</p>
 ```
 
-After 
+After
 
 ```xml
-<hi rendition="#i">italics</hi>
+<p facs="#facs_33_TextRegion_1631109932128_1025">
+    <lb facs="#facs_33_r1l27" n="N001"/>Man stößt also hier auf eine unterste Schicht von Begriffen (daher der Name
+    <lb facs="#facs_33_r1l28" n="N002"/><hi rendition="#i">Grund</hi>begriffe), auf denen das bildliche Vorstellen in seiner allgemeinsten Form
+    <lb facs="#facs_33_r1l29" n="N003"/>beruht.</p>
 ```
 
 ```python
@@ -83,13 +89,23 @@ print(xml_data, file=open("temp/cur.xml", 'w'))
 Before
 
 ```xml
-⊂1⊃
+<p facs="#facs_114_TextRegion_1632680143045_494">
+    <lb facs="#facs_114_r1l5" n="N001"/>Um aus diesem Wirrsal herauszukommen, empfiehlt es sich zunächst, der
+    <lb facs="#facs_114_r1l6" n="N002"/>Geschichte der Interpretation in ihren wichtigsten Stationen nachzugehen⊂1⊃.
+    <lb facs="#facs_114_r1l7" n="N003"/>Der erste, der eine ausführliche Erklärung des Blattes gibt, ist Arend in seiner
+    <lb facs="#facs_114_r1l8" n="N004"/>1728 erschienenen Gedächtnisschrift, aus Anlaß des 200jährigen Todestages
+    <lb facs="#facs_114_r1l9" n="N005"/>Dürers⊂2⊃...</p>
 ```
 
-After 
+After
 
 ```xml
-<note type="refnum">1</note>
+<p facs="#facs_114_TextRegion_1632680143045_494">
+    <lb facs="#facs_114_r1l5" n="N001"/>Um aus diesem Wirrsal herauszukommen, empfiehlt es sich zunächst, der
+    <lb facs="#facs_114_r1l6" n="N002"/>Geschichte der Interpretation in ihren wichtigsten Stationen nachzugehen<note type="refnum">1</note>.
+    <lb facs="#facs_114_r1l7" n="N003"/>Der erste, der eine ausführliche Erklärung des Blattes gibt, ist Arend in seiner
+    <lb facs="#facs_114_r1l8" n="N004"/>1728 erschienenen Gedächtnisschrift, aus Anlaß des 200jährigen Todestages
+    <lb facs="#facs_114_r1l9" n="N005"/>Dürers<note type="refnum">2</note>...</p>
 ```
 
 ```python
@@ -104,13 +120,17 @@ print(xml_data, file=open("temp/fn1.xml", 'w'))
 Before
 
 ```xml
-⊤1⊥
+<note place="foot" n="[footnote reference]" facs="#facs_114_TextRegion_1632680135558_482">
+    <lb facs="#facs_114_r1l35" n="N001"/>⊤1⊥ Ich sehe dabei ab von Vasari, der kurzweg sagt, die Beschäftigung mit den dargestellten
+    <lb facs="#facs_114_r1l36" n="N002"/>Dingen habe die Frau melancholisch gemacht und würde jeden melancholisch machen...</note>
 ```
 
-After 
+After
 
 ```xml
-<hi rendition="#sup">1</hi>
+<note place="foot" n="[footnote reference]" facs="#facs_114_TextRegion_1632680135558_482">
+    <lb facs="#facs_114_r1l35" n="N001"/><hi rendition="#sup">1</hi> Ich sehe dabei ab von Vasari, der kurzweg sagt, die Beschäftigung mit den dargestellten
+    <lb facs="#facs_114_r1l36" n="N002"/>Dingen habe die Frau melancholisch gemacht und würde jeden melancholisch machen...</note>
 ```
 
 ```python
@@ -125,17 +145,31 @@ Before
 
 ```xml
 <div>
-    <p>Lorem ipsum<note type="refnum">1</note> dolor</p>
-    <note><hi rendition="#sup">1</hi> Sit amet.</note>
+    <p facs="#facs_114_TextRegion_1632680143045_494">
+        <lb facs="#facs_114_r1l5" n="N001"/>Um aus diesem Wirrsal herauszukommen, empfiehlt es sich zunächst, der
+        <lb facs="#facs_114_r1l6" n="N002"/>Geschichte der Interpretation in ihren wichtigsten Stationen nachzugehen<note type="refnum">1</note>.
+        <lb facs="#facs_114_r1l7" n="N003"/>Der erste, der eine ausführliche Erklärung des Blattes gibt, ist Arend in seiner
+        <lb facs="#facs_114_r1l8" n="N004"/>1728 erschienenen Gedächtnisschrift, aus Anlaß des 200jährigen Todestages
+        <lb facs="#facs_114_r1l9" n="N005"/>Dürers<note type="refnum">2</note>...</p>
+    <note place="foot" n="[footnote reference]" facs="#facs_114_TextRegion_1632680135558_482">
+        <lb facs="#facs_114_r1l35" n="N001"/><hi rendition="#sup">1</hi> Ich sehe dabei ab von Vasari, der kurzweg sagt, die Beschäftigung mit den dargestellten
+        <lb facs="#facs_114_r1l36" n="N002"/>Dingen habe die Frau melancholisch gemacht und würde jeden melancholisch machen...</note>
 </div>
-
 ```
 
-After 
+After
 
 ```xml
 <div>
-    <p>Lorem ipsum<note place="foot" n="1">Sit amet.</note> dolor</p>
+    <p facs="#facs_114_TextRegion_1632680143045_494">
+        <lb facs="#facs_114_r1l5" n="N001"/>Um aus diesem Wirrsal herauszukommen, empfiehlt es sich zunächst, der
+        <lb facs="#facs_114_r1l6" n="N002"/>Geschichte der Interpretation in ihren wichtigsten Stationen nachzugehen<note n="1" xml:id="facs_114_note_1" place="foot" facs="#facs_114_TextRegion_1632680135558_482">
+        <lb facs="#facs_114_r1l35" n="N001"/> Ich sehe dabei ab von Vasari, der kurzweg sagt, die Beschäftigung mit den dargestellten
+        <lb facs="#facs_114_r1l36" n="N002"/>Dingen habe die Frau melancholisch gemacht und würde jeden melancholisch machen...</note>.
+        <lb facs="#facs_114_r1l7" n="N003"/>Der erste, der eine ausführliche Erklärung des Blattes gibt, ist Arend in seiner
+        <lb facs="#facs_114_r1l8" n="N004"/>1728 erschienenen Gedächtnisschrift, aus Anlaß des 200jährigen Todestages
+        <lb facs="#facs_114_r1l9" n="N005"/>Dürers<note n="2" xml:id="facs_114_note_2" place="foot" facs="#facs_114_TextRegion_1632680134071_478">
+        <lb facs="#facs_114_r1l39" n="N001"/> H. C. Arend: Das Gedächtnis der Ehren... A. Dürers 1728 (Goslar).</note>...</p>
 </div>
 ```
 
@@ -152,7 +186,7 @@ print(xml_data, file=open("temp/fn3.xml", 'w'))
 ₍ABC₎
 ```
 
-After 
+After
 
 ```xml
 <hi rendition="#k">abc</hi>
@@ -171,7 +205,7 @@ print(xml_data, file=open("temp/scap.xml", 'w'))
 <p type="first-paragraph">Lorem</p>
 ```
 
-After 
+After
 
 ```xml
 <p type="first" rendition="#aq">Lorem</p>
@@ -186,14 +220,14 @@ print(xml_data, file=open("temp/para.xml", 'w'))
 
 `\[↾([F0-9/\-]+)⇃\]` -> `lambda m: '[<ref target="#doc_' + re.sub(r'/', '_', m.group(1)) + '">' + m.group(1) + '</ref>]'"`
 
-```
-[↾1550/4⇃]
+```xml
+<p>[↾1550/4⇃]</p>
 ```
 
-After 
+After
 
 ```xml
-[<ref target="#doc_1550_4">1550/4</ref>]
+<p>[<ref target="#doc_1550_4">1550/4</ref>]</p>
 ```
 
 ```python
@@ -211,7 +245,7 @@ Before
 ↾bold⇃
 ```
 
-After 
+After
 
 ```xml
 <hi rendition="#b">bold</hi>
@@ -269,7 +303,7 @@ Before
 <div>
     <div>
         <p>Lorem ispum</p>
-        <pb facs="#facs_([0-9]+)"/>
+        <pb facs="#facs_42"/>
         <fw/>
     </div>
     <div>
@@ -303,16 +337,18 @@ Before
 
 ```xml
 <div>
-    <pb/>
-    <fw type="header">Running title</fw>
-    <fw type="page">42</fw>
+    <fw type="page" place="bottom" facs="#facs_41_TextRegion_1622902436286_1439">
+        <lb facs="#facs_41_r1l32" n="N001"/>27</fw>
+    <pb facs="#facs_42" n="42" xml:id="img_0042"/>
+    <fw type="header" place="top" facs="#facs_42_TextRegion_1624278083468_97">
+        <lb facs="#facs_42_r1l1" n="N001"/>GEDANKEN ZUR KUNSTGESCHICHTE</fw>
 </div>
 ```
 After
 
 ```xml
 <div>
-    <pb n="42"/>
+    <pb n="28" facs="#facs_42" xml:id="img_0042"/>
 </div>
 ```
 
@@ -337,8 +373,8 @@ After
 ```xml
 <div>
     <p>Lorem ipsum
-    <pb/>
-    dolor sit amet.</p>
+        <pb/>
+        dolor sit amet.</p>
 </div>
 ```
 
@@ -423,13 +459,20 @@ print(xml_data, file=open("temp/hi.xml", "w"))
 Before
 
 ```xml
-<p>Kunst¬
-    <lb/>werk</p>
+<p type="paragraph" facs="#facs_9_TextRegion_1622895576163_258">
+    <lb facs="#facs_9_r1l2" n="N001"/>Seit Jahren haben gutmeinende Freunde und vertrauensvolle Verleger mir 
+    zu¬
+    <lb facs="#facs_9_r1l3" n="N002"/>geredet, 
+    einen Band gesammelter Vorträge und Aufsätze herauszugeben.
+</p>
 ```
 After
 
 ```xml
-<p>Kunst<lb break="no" rend="hyphen"/>werk</p>
+<p type="paragraph" facs="#facs_9_TextRegion_1622895576163_258">
+    <lb facs="#facs_9_r1l2" n="N001"/>Seit Jahren haben gutmeinende Freunde und vertrauensvolle Verleger mir 
+    zu<lb break="no" rend="hyphen" facs="#facs_9_r1l3" n="N002"/>geredet, 
+    einen Band gesammelter Vorträge und Aufsätze herauszugeben.</p>
 ```
 
 ```python
@@ -442,7 +485,7 @@ print(xml_data, file=open("temp/hyph.xml", 'w'))
 Before
 
 ```xml
-...
+
 ```
 After
 
