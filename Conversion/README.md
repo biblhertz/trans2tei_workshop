@@ -19,10 +19,8 @@ Encoding of specific textual phenomenons during the several steps:
 We are happy to rely on [dariok/page2tei](https://github.com/dariok/page2tei) by Dario Kampkaspar as the first step
 in our XML conversion.
 
-```python
-xml_data = transform.page2tei(args.infile_name)
-print(xml_data, file=open("temp/tei.xml", 'w'))
-```
+Dependent code: `transform.page2tei("path-to/mets.xml")`  
+Default output: `temp/tei.xml`
 
 ### Post-processing specific to our workflow
 
@@ -40,25 +38,24 @@ This step adds the default renditions in the teiHeader and replaces some element
 
 This step is unlikely to break the pipeline.
 
-```python
-xml_data = transform.postprocess_page2tei(xml_data)
-print(xml_data, file=open("temp/tei-post.xml", "w"))
-```
+Dependent code: `transform.postprocess_page2tei(xml_string)`  
+Default output: `temp/tei-post.xml`
 
 ### Deletion of `tei:facsimile`
 
 Here, the `tei:facsimile` element is removed because there is no intention of a parallel view.
 
-```python    
-xml_data = transform.remove_position_data(xml_data)
-print(xml_data, file=open("temp/positions.xml", "w"))
-```
+Dependent code: `transform.remove_position_data(xml_string)`  
+Default output: `temp/positions.xml`
 
 ### Encode italics
 
+Italics encoded by special characters are not visible as XML. They are replaced with regular expressions.
+In this step, the new elements only exist as string and will turn into proper elements once the document is parsed.
+
 `⌠(.*?)⌡` -> `<hi rendition="#i">\1</hi>`
 
-Before
+Before:
 
 ```xml
 <p facs="#facs_33_TextRegion_1631109932128_1025">
@@ -67,7 +64,7 @@ Before
     <lb facs="#facs_33_r1l29" n="N003"/>beruht.</p>
 ```
 
-After
+After:
 
 ```xml
 <p facs="#facs_33_TextRegion_1631109932128_1025">
@@ -76,17 +73,16 @@ After
     <lb facs="#facs_33_r1l29" n="N003"/>beruht.</p>
 ```
 
-```python
-# Text in italics is tagged in plain text with integrals. Replace with according tags.
-xml_data = replacements.cursive_text(xml_data)
-print(xml_data, file=open("temp/cur.xml", 'w'))
-```
+Dependent code: `replacements.cursive_text(xml_string)`  
+Default output: `temp/cur.xml`
 
 ### Encode footnote numbers in the text
 
+Similarly, footnote numbers in the text are recognized with regular expressions and elements are inserted.
+
 `⊂([0-9]+)⊃` -> `<note type="refnum">\1</note>`
 
-Before
+Before:
 
 ```xml
 <p facs="#facs_114_TextRegion_1632680143045_494">
@@ -97,7 +93,7 @@ Before
     <lb facs="#facs_114_r1l9" n="N005"/>Dürers⊂2⊃...</p>
 ```
 
-After
+After:
 
 ```xml
 <p facs="#facs_114_TextRegion_1632680143045_494">
@@ -108,16 +104,16 @@ After
     <lb facs="#facs_114_r1l9" n="N005"/>Dürers<note type="refnum">2</note>...</p>
 ```
 
-```python
-xml_data = replacements.footnote_numbers(xml_data)
-print(xml_data, file=open("temp/fn1.xml", 'w'))
-```
+Dependent code: `replacements.footnote_numbers(xml_string)`  
+Default output: `temp/fn1.xml`
 
 ### Encode footnote numbers in the footnotes
 
+Footnote numbers in the footer are replaced in a similar manner.
+
 `⊤([0-9]+)⊥` -> `<hi rendition="#sup">\1</hi>`
 
-Before
+Before:
 
 ```xml
 <note place="foot" n="[footnote reference]" facs="#facs_114_TextRegion_1632680135558_482">
@@ -125,7 +121,7 @@ Before
     <lb facs="#facs_114_r1l36" n="N002"/>Dingen habe die Frau melancholisch gemacht und würde jeden melancholisch machen...</note>
 ```
 
-After
+After:
 
 ```xml
 <note place="foot" n="[footnote reference]" facs="#facs_114_TextRegion_1632680135558_482">
@@ -133,15 +129,17 @@ After
     <lb facs="#facs_114_r1l36" n="N002"/>Dingen habe die Frau melancholisch gemacht und würde jeden melancholisch machen...</note>
 ```
 
-```python
-xml_data = replacements.footnotes(xml_data)
-print(xml_data, file=open("temp/fn2.xml", 'w'))
-```
+Dependent code: `replacements.footnotes(xml_string)`  
+Default output: `temp/fn2.xml`
 
 ### Move footnotes to their inline position
 
+With an XML transformation that inserts the footnote at the footnote number and deletes it in the original position,
+the footnotes are made inline.
 
-Before
+For the transformation, the XML content is parsed before and transformed to a string after again.
+
+Before:
 
 ```xml
 <div>
@@ -157,7 +155,7 @@ Before
 </div>
 ```
 
-After
+After:
 
 ```xml
 <div>
@@ -173,95 +171,80 @@ After
 </div>
 ```
 
-```python
-xml_data = transform.move_footnotes(xml_data)
-print(xml_data, file=open("temp/fn3.xml", 'w'))
-```
+Dependent code: `transform.move_footnotes(xml_string)`  
+Default output: `temp/fn3.xml`
 
 ### Encode small caps
 
+In addition to replacements, small caps are encoded as lower case letters.
+
 `₍([A-Z\-]+)₎` -> `<hi rendition="#k">` + `m.group(1).lower()` + `</hi>`
+
+Before:
 
 ```
 ₍ABC₎
 ```
 
-After
+After:
 
 ```xml
 <hi rendition="#k">abc</hi>
 ```
 
-```python
-xml_data = replacements.small_caps(xml_data)
-print(xml_data, file=open("temp/scap.xml", 'w'))
-```
-
-### First paragraph
-
-`type="first-paragraph"` -> `type="first" rendition="#aq"`
-
-```xml
-<p type="first-paragraph">Lorem</p>
-```
-
-After
-
-```xml
-<p type="first" rendition="#aq">Lorem</p>
-```
-
-```python
-xml_data = replacements.first_paragraph(xml_data)
-print(xml_data, file=open("temp/para.xml", 'w'))
-```
+Dependent code: `replacements.small_caps(xml_string)`  
+Default output: `temp/scap.xml`
 
 ### Encode document links
 
+A project specific example from 'Raphael in Early Modern Sources':  
+Find links to other documents and construct the link target from the link content.
+
 `\[↾([F0-9/\-]+)⇃\]` -> `lambda m: '[<ref target="#doc_' + re.sub(r'/', '_', m.group(1)) + '">' + m.group(1) + '</ref>]'"`
+
+Before:
 
 ```xml
 <p>[↾1550/4⇃]</p>
 ```
 
-After
+After:
 
 ```xml
 <p>[<ref target="#doc_1550_4">1550/4</ref>]</p>
 ```
 
-```python
-xml_data = replacements.document_links(xml_data)
-print(xml_data, file=open("temp/link.xml", 'w'))
-```
+Dependent code: `replacements.document_links(xml_string)`  
+Default output: `temp/link.xml`
 
 ### Encode bold text
 
+The replacements of bold passages does not differ much from that of italics.
+
 `↾([^<>]?)⇃` -> `<hi rendition="#b">\1</hi>"`
 
-Before
+Before:
 
 ```
 ↾bold⇃
 ```
 
-After
+After:
 
 ```xml
 <hi rendition="#b">bold</hi>
 ```
 
-```python
-xml_data = replacements.bold_text(xml_data)
-print(xml_data, file=open("temp/bold.xml", 'w'))
-```
+Dependent code: `replacements.bold_text(xml_string)`  
+Default output: `temp/bold.xml`
 
 ### Move page begins into corresponding sections 1
 
+In order to interact properly with pagination, the page begins are moved into the following chapters.
+
 `(<pb facs="#facs_([0-9]+)".*? />\n)(\s+)(</div>\n\s+<div>\n)` -> `\4\3\1`
 
-
-Before
+Before:
 
 ```xml
 <div>
@@ -274,7 +257,7 @@ Before
     </div>
 </div>
 ```
-After
+After:
 
 ```xml
 <div>
@@ -288,16 +271,16 @@ After
 </div>
 ```
 
-```python
-xml_data = replacements.move_pb_into_div1(xml_data)
-print(xml_data, file=open("temp/pb1.xml", 'w'))
-```
+Dependent code: `replacements.move_pb_into_div1(xml_string)`  
+Default output: `temp/pb1.xml`
 
 ### Move page begins into corresponding sections 2
 
+If printed page numbers are present, they are moved, too.
+
 `(<pb facs="#facs_[0-9]+".*? />\s*<fw.*?>\s*.*?</fw>\s*)(</div>\s*<div>\s*)` -> `\2\1`
 
-Before
+Before:
 
 ```xml
 <div>
@@ -311,7 +294,7 @@ Before
     </div>
 </div>
 ```
-After
+After:
 
 ```xml
 <div>
@@ -326,14 +309,16 @@ After
 </div>
 ```
 
-```python
-xml_data = replacements.move_pb_into_div2(xml_data)
-print(xml_data, file=open("temp/pb2.xml", 'w'))
-```
+Dependent code: `replacements.move_pb_into_div2(xml_string)`  
+Default output: `temp/pb2.xml`
 
 ### Move page information into `tei:pb`
 
-Before
+Most of our projects do not focus on *form work* (fw) and delete it.
+
+If not already present, the page number is copied form the `fw` to the `pb` during this step.
+
+Before:
 
 ```xml
 <div>
@@ -344,7 +329,7 @@ Before
         <lb facs="#facs_42_r1l1" n="N001"/>GEDANKEN ZUR KUNSTGESCHICHTE</fw>
 </div>
 ```
-After
+After:
 
 ```xml
 <div>
@@ -352,14 +337,14 @@ After
 </div>
 ```
 
-```python
-xml_data = transform.page_numbers(xml_data)
-print(xml_data, file=open("temp/pb3.xml", 'w'))
-```
+Dependent code: `transform.page_numbers(xml_string)`  
+Default output: `temp/pb3.xml`
 
 ### Join paragraphs
 
-Before
+Paragraphs that still carry the type *continued* are merged over page boundaries.
+
+Before:
 
 ```xml
 <div>
@@ -368,7 +353,7 @@ Before
     <p type="continued">dolor sit amet.</p>
 </div>
 ```
-After
+After:
 
 ```xml
 <div>
@@ -378,12 +363,12 @@ After
 </div>
 ```
 
-```python
-xml_data = transform.join_paragraphs(xml_data)
-print(xml_data, file=open("temp/rep1.xml", "w"))
-```
+Dependent code: `transform.join_paragraphs(xml_string)`  
+Default output: `temp/rep1.xml`
 
 ### Join italics and small caps 1
+
+First step: Replace elements with attributes by plain elements so the start and the end tag encode all information.
 
 Before
 
@@ -400,13 +385,12 @@ After
     <lb/><k>caps</k>.</p>
 ```
 
-```python
-# join hi #i and #k
-xml_data = transform.simplify_hi(xml_data)
-print(xml_data, file=open("temp/hi1.xml", "w"))
-```
+Dependent code: `transform.simplify_hi(xml_string)`  
+Default output: `temp/hi1.xml`
 
 ### Join italics and small caps 2
+
+Second step: Delete ending tags in old line and starting tags in new line.
 
 `</k>(¬?\s*(?:<pb [^<>]+/>)?\s*<lb [^<>]+/>\s*)<k>` -> `\1`  
 `</i>(¬?\s*(?:<pb [^<>]+/>)?\s*<lb [^<>]+/>\s*)<i>` -> `\1`
@@ -426,13 +410,12 @@ After
     <lb/>caps</k>.</p>
 ```
 
-```python
-xml_data = replacements.join_small_caps(xml_data)
-xml_data = replacements.join_cursive_text(xml_data)
-print(xml_data, file=open("temp/hi2.xml", "w"))
-```
+Dependent code: `replacements.join_small_caps(xml_string)`  
+Default output: `temp/hi2.xml`
 
 ### Join italics and small caps 3
+
+Third step: Restore original tag schema.
 
 Before
 
@@ -449,14 +432,14 @@ After
     <lb/>caps</hi>.</p>
 ```
 
-```python
-xml_data = transform.expand_hi(xml_data)
-print(xml_data, file=open("temp/hi.xml", "w"))
-```
+Dependent code: `transform.expant_hi(xml_string)`  
+Default output: `temp/hi1.xml`
 
 ### Encode hyphenation in TEI way
 
-Before
+For full-text indexing and reader-friendly views, hyphenation is detected and encoded in a TEI-native way.
+
+Before:
 
 ```xml
 <p type="paragraph" facs="#facs_9_TextRegion_1622895576163_258">
@@ -466,7 +449,7 @@ Before
     einen Band gesammelter Vorträge und Aufsätze herauszugeben.
 </p>
 ```
-After
+After:
 
 ```xml
 <p type="paragraph" facs="#facs_9_TextRegion_1622895576163_258">
@@ -475,60 +458,42 @@ After
     einen Band gesammelter Vorträge und Aufsätze herauszugeben.</p>
 ```
 
-```python
-xml_data = replacements.replace_hyphens(xml_data)
-print(xml_data, file=open("temp/hyph.xml", 'w'))
-```
+Dependent code: `replacements.replace_hyphens(xml_string)`  
+Default output: `temp/hyph.xml`
+
+### Hyphenation (details)
+
+The recognition of hyphenations is implemented in a defensive way that attends to resolve only clear-cut cases.
+It is based on language specific word lists and a cascade of replacements:
+
+- Find all '¬' and replace them with '-' before numbers or capitals (as in "Merriam-Webster")
+- Load a list of known words with hyphens used in the project (or any such list)
+- Replace '¬' with '-' in such words and mark the break as rendered without additional hyphen. (Words like "un-ionized")
+- Load extensive language specific lists
+- Replace '¬' with '-' in the remaining cases if the combined form is a valid word
 
 ### Remove `tei:lb`
 
-Before
+Remove `lb` elements from the document except in special cases like in headings.
 
-```xml
-
-```
-After
-
-```xml
-...
-```
-
-```python
-xml_data = transform.remove_lb(xml_data)
-print(xml_data, file=open("temp/removed-lb.xml", 'w'))
-```
+Dependent code: `transform.remove_lb(xml_string)`  
+Default output: `temp/removed-lb.xml`
 
 ### Remove `tei:pb`
 
-Before
+Remove `pb` elements form the document to get only the content.
 
-```xml
-...
-```
-After
-
-```xml
-...
-```
-
-```python
-xml_data = transform.remove_pb(xml_data)
-print(xml_data, file=open("temp/removed-pb.xml", 'w'))
-```
+Dependent code: `transform.remove_pb(xml_string)`  
+Default output: `temp/removed-pb.xml`
 
 ### Pretty print
 
 Pretty outfile with indentation and breaks specified per element.
+To simplify the replacements above, pretty printing is best done at the end.
 
-```python
-xml_data = transform.indent(xml_data)
-print(xml_data, file=open("temp/ind.xml", 'w'))
-```
+Dependent code: `transform.indent(xml_string)`  
+Default output: `temp/ind.xml`
 
 ### Write outfile
 
-```python
-with open(args.outfile_name, "w") as outfile:
-    outfile.write(xml_data)
-outfile.close()
-```
+The document defined before is written to the outfile specified by the argument `-o`.
