@@ -11,4 +11,6 @@ For example, the following markers were used:
 - ⊤⊥ (U+22A4/U+22A5) to indicate superscript text in footnote references
 - ₍₎ (U+208D/U+208E) to indicate small caps
 - ↾⇃ (U+21BE/U+21C3) to indicate bold
+
 The only precaution was to manually mark before and after each word or group of words for each line, since an initial model, in which italic sentences that wrapped to the next line were marked only at the beginning and end of the clause, had shown to have problems in inserting markings at the end or beginning of the line. In hindsight, this problem is an obvious consequence of the fact that models analyze individual lines and not sets of lines and their content.
+You can get an idea of how this symbols are used in the transformation sequence you can check the [Conversion](../Conversion/README.md) description.
