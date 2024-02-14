@@ -472,6 +472,10 @@ It is based on language specific word lists and a cascade of replacements:
 - Load extensive language specific lists
 - Replace '¬' with '-' in the remaining cases if the combined form is a valid word
 
+For non-standardised languages like Old Italian, we were not able to catch a lot of hyphenations due to the lack
+of readily available word lists. Also for highly synthetic languages with a lot of ad-hoc formations, a more
+complex approach would be needed.
+
 ### Remove `tei:lb`
 
 Remove `lb` elements from the document except in special cases like in headings.
