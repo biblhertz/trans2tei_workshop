@@ -2,7 +2,7 @@
 
 ## Installing the necessary programs
 
-Clone the GitHub repo `biblhertz/trans2tei` recursively to get the dependencies:
+Clone the GitHub repo [biblhertz/trans2tei](https://github.com/biblhertz/trans2tei) recursively to get the dependencies:
 
 ```shell
 git clone --recurse-submodules git@github.com:biblhertz/trans2tei.git
