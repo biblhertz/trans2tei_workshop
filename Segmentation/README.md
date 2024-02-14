@@ -30,4 +30,5 @@ If you have documents with block text recognition but no structure tagging it co
 Please be aware that each text area/region needs to be visually distict from the others (i.e. paragraph and commentary should use different fonts and font size). Since P2PaLA cannot rely on content, you will probably need to check all "-continued" regions.
 
 ## Field models (beta only)
+It could be possible to train a field model for region either to recognize the regions or even the regions with structural tags altogether, but at the moment this is experimental and there are no public models. 
 
