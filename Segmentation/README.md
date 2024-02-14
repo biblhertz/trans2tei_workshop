@@ -39,7 +39,7 @@ With a series of subsequent XSLT transformations and global REGEX substitutions,
 - Use the content of text areas marked as "page_number" as the label for new pages
 - Combine the content of footnotes with the reference in the text, thanks to the identity between the superscript numbers marked in the text and in the notes
 - Join hyphenated words in the text into whole words. Hyphens at the end of lines in the transcription are marked with the symbol ¬ (U+00AC), but not wanting to risk joining words normally written with a hyphen with an automatic substitution, attempts were made to use dictionaries (not useful for ancient Italian) to reduce errors.
-- Link references between documents (indicated as bold numbers in the text) with the corresponding documents. Also for this, the presence of groups of documents in the references made it impossible to completely automate the process.
+- Link references between documents (indicated as bold numbers beetween square brackets in REMS) with the corresponding documents. Also for this, the presence of groups of documents in the references made it impossible to completely automate the process.
 
 
 
