@@ -12,7 +12,7 @@ Paste a copy of [Saxon-HE](https://github.com/Saxonica/Saxon-HE/) into the root 
 If the version is different from `saxon-he-10.5.jar`, adjust the variable `SAXON_JAR` in `transform.py`.
 
 Make sure the following directories exist in `trans2tei`: 
-`export` for Transkribus exports, `out` for outputs and `temp`for temporary files for debugging.
+`export` for Transkribus exports, `out` for outputs and `temp`for temporary files for debugging. (Get a [temporarily available example](https://transkribus.eu/export/2035342909945879992/export_job_7935643.zip))
 
 In order to annotate hyphenations with proper TEI, it is advisable to add extensive wordlists in `language_data/de.txt`
 and `language_data/en.txt`.
